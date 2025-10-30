@@ -17,14 +17,14 @@ class _NewItemState extends State<NewItem> {
   var _enteredQuantity = 1;
   var _selectedCategory = categories[Categories.vegetables]!;
 
-  void _saveItem() {
+  void _saveItem() async {
     _formKey.currentState!.validate();
     _formKey.currentState!.save();
     final url = Uri.https(
       'flutter-prep-5e4fb-default-rtdb.firebaseio.com',
       'shopping-list.json',
     );
-    http.post(
+    final response = await http.post(
       url,
       headers: {'content-type': 'application/json'},
       body: json.encode({
@@ -33,7 +33,13 @@ class _NewItemState extends State<NewItem> {
         'category': _selectedCategory.title,
       }),
     );
-    // Navigator.of(context).pop();
+    print(response.body);
+    print(response.statusCode);
+
+    if (!context.mounted) {
+      return;
+    }
+    Navigator.of(context).pop();
   }
 
   @override
